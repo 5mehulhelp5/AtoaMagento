@@ -13,6 +13,10 @@
                        showInStore="1">
                     <label>Access Token from Atoa Business App</label>
                 </field>
+                <field id="webhook_signing_secret" translate="label comment" type="password" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Webhook Signing Secret</label>
+                    <comment>If you have enabled V2 signing by generating a signing secret, paste it here. Required to verify V2 webhook signatures.</comment>
+                </field>
                 <field id="webhook_url" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Webhook URL</label>
