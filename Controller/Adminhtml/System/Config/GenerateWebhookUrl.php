@@ -16,7 +16,7 @@ use Magento\Store\Model\StoreManagerInterface;
 
 class GenerateWebhookUrl extends Action
 {
-    private const END_POINT = 'https://api.atoa.me/api/webhook/merchant';
+    private const END_POINT = 'https://api.atoa.me/api/webhook/integrations/magento';
 
     /**
      * @var CurlFactory
