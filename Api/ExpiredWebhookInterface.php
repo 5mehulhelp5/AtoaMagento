@@ -32,8 +32,8 @@ interface ExpiredWebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $signatureHash,
         ?string $redirectUrl,
+        ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface;
 }
