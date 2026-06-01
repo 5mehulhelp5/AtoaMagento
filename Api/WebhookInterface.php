@@ -33,6 +33,7 @@ interface WebhookInterface
      * @param DataObject $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $errorDescription
+     * @param ?string $eventType
      * @return WebhookInterface
      */
     public function execute(
@@ -57,5 +58,6 @@ interface WebhookInterface
         \Magento\Framework\DataObject $redirectUrlParams,
         ?string $redirectUrl,
         ?string $errorDescription = null,
+        ?string $eventType = null,
     ): WebhookInterface;
 }

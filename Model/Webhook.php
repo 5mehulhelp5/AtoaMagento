@@ -39,6 +39,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
      * @param DataObject $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $errorDescription
+     * @param ?string $eventType
      * @return WebhookInterface
      * @throws AlreadyExistsException
      * @throws LocalizedException
@@ -64,7 +65,8 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         ?string $signatureHash,
         \Magento\Framework\DataObject $redirectUrlParams,
         ?string $redirectUrl,
-        ?string $errorDescription = null
+        ?string $errorDescription = null,
+        ?string $eventType = null
     ): WebhookInterface {
         $this->logger->info('*******************************************************************');
         $this->logger->info('[PROCESS_WEBHOOK_START]');

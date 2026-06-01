@@ -25,6 +25,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
      * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param ?string $eventType
      * @return ExpiredWebhookInterface
      * @throws AlreadyExistsException
      */
@@ -39,6 +40,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         ?string $paymentRequestId,
         ?string $signatureHash,
         ?string $redirectUrl,
+        ?string $eventType = null
     ): ExpiredWebhookInterface {
         $this->logger->info('*******************************************************************');
         $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_START]');

@@ -20,6 +20,7 @@ interface ExpiredWebhookInterface
      * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param ?string $eventType
      * @return ExpiredWebhookInterface
      */
     public function execute(
@@ -32,6 +33,7 @@ interface ExpiredWebhookInterface
         ?string $orderId,
         ?string $paymentRequestId,
         ?string $signatureHash,
-        ?string $redirectUrl
+        ?string $redirectUrl,
+        ?string $eventType = null
     ): ExpiredWebhookInterface;
 }
