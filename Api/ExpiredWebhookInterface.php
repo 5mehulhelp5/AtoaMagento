@@ -20,6 +20,7 @@ interface ExpiredWebhookInterface
      * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param ?string $eventType
      * @return ExpiredWebhookInterface
      */
     public function execute(
@@ -31,7 +32,8 @@ interface ExpiredWebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $signatureHash,
-        ?string $redirectUrl
+        ?string $redirectUrl,
+        ?string $signatureHash = null,
+        ?string $eventType = null
     ): ExpiredWebhookInterface;
 }
