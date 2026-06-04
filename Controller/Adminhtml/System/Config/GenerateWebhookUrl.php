@@ -117,7 +117,7 @@ class GenerateWebhookUrl extends Action
                 return $result->setData([
                     'success' => false,
                     'url' => '',
-                    'message' => __($response['message'])
+                    'message' => __($responseWebhookExpired['message'])
                 ]);
             }
 
