@@ -35,10 +35,11 @@ class Webhook extends AbstractWebhook implements WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param ?string $signatureHash
      * @param DataObject $redirectUrlParams
      * @param ?string $redirectUrl
+     * @param ?string $signatureHash
      * @param ?string $errorDescription
+     * @param ?string $eventType
      * @return WebhookInterface
      * @throws AlreadyExistsException
      * @throws LocalizedException
@@ -61,10 +62,11 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $signatureHash,
         \Magento\Framework\DataObject $redirectUrlParams,
         ?string $redirectUrl,
-        ?string $errorDescription = null
+        ?string $signatureHash = null,
+        ?string $errorDescription = null,
+        ?string $eventType = null
     ): WebhookInterface {
         $this->logger->info('*******************************************************************');
         $this->logger->info('[PROCESS_WEBHOOK_START]');
