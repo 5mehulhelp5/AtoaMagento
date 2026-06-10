@@ -25,7 +25,6 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
      * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @param ?string $redirectUrl
-     * @param ?string $eventType
      * @return ExpiredWebhookInterface
      * @throws AlreadyExistsException
      */
@@ -38,9 +37,8 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
+        ?string $signatureHash,
         ?string $redirectUrl,
-        ?string $signatureHash = null,
-        ?string $eventType = null
     ): ExpiredWebhookInterface {
         $this->logger->info('*******************************************************************');
         $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_START]');

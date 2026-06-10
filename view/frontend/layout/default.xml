@@ -29,5 +29,13 @@
                    ifconfig="payment/atoa/atoa_display_settings/enable_information_popup"
                    template="Atoa_AtoaPayment::banner/information-modal.phtml" />
         </referenceContainer>
+        <referenceBlock name="footer_links" remove="true"/>
+        <referenceContainer name="footer-container">
+            <block
+                class="Magento\Framework\View\Element\Template"
+                name="atoa.footer.link"
+                template="Atoa_AtoaPayment::footer/link.phtml"
+                after="-"/>
+        </referenceContainer>
     </body>
 </page>

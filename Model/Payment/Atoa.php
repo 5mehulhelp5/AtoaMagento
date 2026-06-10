@@ -9,11 +9,11 @@ class Atoa
      * @var string
      */
     public const CODE = 'atoa';
+    public const CODE_CARD = 'atoa_card';
 
     public const IS_SANDBOX = 'is_sandbox';
     public const ACCESS_TOKEN = 'access_token';
     public const WEBHOOK_URL = 'webhook_url';
-    public const WEBHOOK_SIGNING_SECRET = 'webhook_signing_secret';
     public const DEFAULT_CALLBACK_STORE = 'default_callback_store';
     public const NEW_ORDER_STATUS = 'order_status';
     public const PAID_ORDER_STATUS = 'order_status_paid';

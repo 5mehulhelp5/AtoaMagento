@@ -9,7 +9,7 @@ use Magento\Store\Model\ScopeInterface;
 
 class ConfigProvider
 {
-    public const MODULE_CONFIG_PREFIX = 'payment/atoa/';
+    public const MODULE_CONFIG_PREFIX = 'payment/';
 
     /**
      * @var ScopeConfigInterface
@@ -31,12 +31,13 @@ class ConfigProvider
      * Get Atoa Config
      *
      * @param string $field
+     * @param string $methodCode
      * @param ?string $scope
      * @return mixed
      */
-    public function getConfig(string $field, ?string $scope = ScopeInterface::SCOPE_STORE): mixed
+    public function getConfig(string $field, string $methodCode = Atoa::CODE, ?string $scope = ScopeInterface::SCOPE_STORE): mixed
     {
-        return $this->scopeConfig->getValue(self::MODULE_CONFIG_PREFIX . $field, $scope);
+        return $this->scopeConfig->getValue(self::MODULE_CONFIG_PREFIX . $methodCode . '/' . $field, $scope);
     }
 
     /**

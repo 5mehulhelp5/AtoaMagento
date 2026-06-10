@@ -13,10 +13,6 @@
                        showInStore="1">
                     <label>Access Token from Atoa Business App</label>
                 </field>
-                <field id="webhook_signing_secret" translate="label comment" type="password" sortOrder="35" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Webhook Signing Secret</label>
-                    <comment>If you have enabled V2 signing by generating a signing secret, paste it here. Required to verify V2 webhook signatures.</comment>
-                </field>
                 <field id="webhook_url" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1"
                        showInStore="1">
                     <label>Webhook URL</label>
@@ -148,6 +144,23 @@
                         <label>Banner Checkout Text</label>
                     </field>
                 </group>
+            </group>
+            <group id="atoa_card" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="2" translate="label">
+                <label>Atoa Card Payment</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="50" translate="label" type="text">
+                    <label>Title</label>
+                </field>
+                <field id="banner_checkout_text" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Banner Checkout Text</label>
+                </field>
+                <field id="banner_styles" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Styles</label>
+                    <source_model>Atoa\AtoaPayment\Model\Source\Styles</source_model>
+                </field>
             </group>
         </section>
     </system>

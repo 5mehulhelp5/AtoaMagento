@@ -1,7 +1,7 @@
 <div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
     <div class="payment-method-title atoa-payment-title field choice">
         <input type="radio"
-               name="atoa"
+               name="payment[method]"
                class="radio"
                data-bind="
                    attr: {'id': getCode()},
@@ -13,16 +13,38 @@
         ></input>
         <label data-bind="attr: {'for': getCode()}" class="atoa-payment-label">
             <span data-bind="text: getTitle()"></span>
+            <div class="bank-support">
+                <!-- Visible Logos -->
+                <!-- ko foreach: getVisibleBankLogos() -->
+                    <span class="atoa-logo-wrapper">
+                        <img data-bind="attr: {src: $data}" class="atoa-bank-logo"/>
+                    </span>
+                <!-- /ko -->
+                <!-- More Bubble -->
+                <!-- ko if: getHiddenBankLogos().length -->
+                <span class="atoa-more-wrapper">
+                    <span class="atoa-more">
+                        +<span data-bind="text: getHiddenBankLogos().length"></span>
+                    </span>
+                    <!-- Hover Popup -->
+                    <span class="atoa-hidden-logos">
+                        <!-- ko foreach: getHiddenBankLogos() -->
+                            <span class="atoa-logo-wrapper">
+                                <img data-bind="attr: {src: $data}" class="atoa-bank-logo"/>
+                            </span>
+                        <!-- /ko -->
+                    </span>
+                </span>
+                <!-- /ko -->
+            </div>
+            <span class="bank-support" data-bind="foreach: getCardLogos()">
+                <span class="atoa-logo-wrapper">
+                    <img data-bind="attr: {src: $data}" class="atoa-bank-logo"/>
+                </span>
+            </span>
             <span data-bind="attr: { class: getStyle() }">
                 <span class="payment-text">
                     <span data-bind="text: getBannerCheckoutText()"></span>
-                    <span class="icon"></span>
-                </span>
-                <span class="bank-support">
-                    <!-- Atoa Bank Logos -->
-                        <img alt="" data-bind="attr: {src: getBankLogosSrc(), alt: getTitle()}" class="payment-banks logo-desktop" />
-                        <img alt="" data-bind="attr: {src: getMobileBankLogosSrc(), alt: getTitle()}" class="payment-banks logo-mobile" />
-                    <!-- Atoa Bank Logos -->
                 </span>
             </span>
         </label>

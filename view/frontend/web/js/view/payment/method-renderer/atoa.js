@@ -33,6 +33,41 @@ define(
             defaults: {
                 template: 'Atoa_AtoaPayment/payment/atoa'
             },
+
+            /**
+             * Get the actual payment type based on selected payment method
+             */
+            getPaymentType: function () {
+                let paymentType = 'PAY_BY_BANK';
+                let paymentCode = this.getCode && typeof this.getCode === 'function' ? this.getCode() : null;
+                
+                // Primary check: use getCode() if available
+                if (paymentCode === 'atoa_card') {
+                    paymentType = 'CARD';
+                } else if (paymentCode === 'atoa') {
+                    paymentType = 'PAY_BY_BANK';
+                } else {
+                    // Fallback: check which radio button is selected
+                    let selectedPayment = $('input[name="payment[method]"]:checked').val();
+                    console.log('Selected payment from DOM:', selectedPayment);
+                    if (selectedPayment === 'atoa_card') {
+                        paymentType = 'CARD';
+                    }
+                }
+                
+                console.log('Determined paymentType:', paymentType, 'paymentCode:', paymentCode);
+                return paymentType;
+            },
+
+            getData: function () {
+                return {
+                    method: this.getCode(),
+                    additional_data: {
+                        payment_type: this.getPaymentType()
+                    }
+                };
+            },
+
             placeOrder: function (data, event) {
                 let self = this;
                 if (event) {
@@ -42,20 +77,14 @@ define(
                 self.startPerformingPlaceOrderAction();
 
                 let emailValidationResult = customer.isLoggedIn(),
-                    loginFormSelector = 'form[data-role=email-with-possible-login]',
-                    paymentOptionSelected = 'input[name=atoa]:checked';
+                    loginFormSelector = 'form[data-role=email-with-possible-login]';
+                
                 if (!customer.isLoggedIn()) {
                     $(loginFormSelector).validation();
                     emailValidationResult = Boolean($(loginFormSelector + ' input[name=username]').valid());
                 }
-                if ($(paymentOptionSelected).val() === undefined) {
-                    self.stopPerformingPlaceOrderAction();
-                    self.messageContainer.addErrorMessage({
-                        message: 'Please choose payment option'
-                    });
-                }
-                if (emailValidationResult && this.validate() && additionalValidators.validate() &&
-                    $(paymentOptionSelected).val() !== undefined) {
+                
+                if (emailValidationResult && this.validate() && additionalValidators.validate()) {
                     this.isPlaceOrderActionAllowed(false);
                     self.getPlaceOrderDeferredObject().fail(
                         function (response) {
@@ -65,21 +94,23 @@ define(
                         }
                     ).done(
                         function (response) {
-                            let serviceUrl = urlBuilder.createUrl(
-                                '/atoa/:orderId/redirect',
+                                    let serviceUrl = urlBuilder.createUrl(
+                                '/atoa/:orderId/redirect/:paymentType',
                                 {
-                                    orderId: response
+                                    orderId: response,
+                                    paymentType: self.getPaymentType()
                                 }
                             );
                             storage.post(serviceUrl).fail(
                                 function (response) {
+                                    console.error('Atoa redirect API error', response);
                                     errorProcessor.process(response, self.messageContainer);
                                     fullScreenLoader.stopLoader();
                                     self.isPlaceOrderActionAllowed(true);
                                 }
                             ).done(
                                 function (response) {
-                                    if (response) {
+                                    if (response && response.redirect_url) {
                                         $.mage.redirect(response.redirect_url);
                                     } else {
                                         errorProcessor.process(response, self.messageContainer);
@@ -126,23 +157,31 @@ define(
             },
 
             getLogoMarkupSrc: function () {
-                return window.checkoutConfig.payment.atoa.logoMarkHref;
+                return window.checkoutConfig.payment[this.getCode()].logoMarkHref;
             },
 
-            getBankLogosSrc: function () {
-                return window.checkoutConfig.payment.atoa.bankLogosHref;
+            getBankLogos: function () {
+                return window.checkoutConfig.payment[this.getCode()].bankLogos || [];
             },
 
-            getMobileBankLogosSrc: function () {
-                return window.checkoutConfig.payment.atoa.mobileBankLogosHref;
+            getVisibleBankLogos: function () {
+                return this.getBankLogos().slice(0, 3);
+            },
+
+            getHiddenBankLogos: function () {
+                return this.getBankLogos().slice(3);
+            },
+
+            getCardLogos: function () {
+                return window.checkoutConfig.payment[this.getCode()].cardLogos || [];
             },
 
             getBannerCheckoutText: function () {
-                return window.checkoutConfig.payment.atoa.bannerCheckoutText;
+                return window.checkoutConfig.payment[this.getCode()].bannerCheckoutText;
             },
 
             getStyle: function () {
-                return 'atoa-payment-checkout style' + window.checkoutConfig.payment.atoa.style;
+                return 'atoa-payment-checkout style' + window.checkoutConfig.payment[this.getCode()].style;
             }
         });
     }

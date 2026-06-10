@@ -37,6 +37,9 @@
                     <banner_checkout_text>Pay securely via your Bank app</banner_checkout_text>
                 </atoa_checkout_setting>
             </atoa>
+            <atoa_card>
+                <model>Atoa\AtoaPayment\Model\Payment\Card</model>
+            </atoa_card>
         </payment>
     </default>
 </config>
