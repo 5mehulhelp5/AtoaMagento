@@ -33,74 +33,97 @@ define(
             defaults: {
                 template: 'Atoa_AtoaPayment/payment/atoa'
             },
+
+            /**
+             * Returns 'CARD' for the atoa_card method, 'PAY_BY_BANK' for everything else.
+             *
+             * @return {string}
+             */
+            getPaymentType: function () {
+                return this.getCode() === 'atoa_card' ? 'CARD' : 'PAY_BY_BANK';
+            },
+
+            /**
+             * Provide additional payment data so the server side knows the payment type.
+             *
+             * @return {Object}
+             */
+            getData: function () {
+                return {
+                    'method': this.item.method,
+                    'additional_data': {
+                        'payment_type': this.getPaymentType()
+                    }
+                };
+            },
+
             placeOrder: function (data, event) {
-                let self = this;
+                var self = this;
                 if (event) {
                     event.preventDefault();
                 }
 
                 self.startPerformingPlaceOrderAction();
 
-                let emailValidationResult = customer.isLoggedIn(),
-                    loginFormSelector = 'form[data-role=email-with-possible-login]',
-                    paymentOptionSelected = 'input[name=atoa]:checked';
+                var emailValidationResult = customer.isLoggedIn(),
+                    loginFormSelector = 'form[data-role=email-with-possible-login]';
+
                 if (!customer.isLoggedIn()) {
                     $(loginFormSelector).validation();
-                    emailValidationResult = Boolean($(loginFormSelector + ' input[name=username]').valid());
+                    emailValidationResult = Boolean(
+                        $(loginFormSelector + ' input[name=username]').valid()
+                    );
                 }
-                if ($(paymentOptionSelected).val() === undefined) {
-                    self.stopPerformingPlaceOrderAction();
-                    self.messageContainer.addErrorMessage({
-                        message: 'Please choose payment option'
-                    });
-                }
-                if (emailValidationResult && this.validate() && additionalValidators.validate() &&
-                    $(paymentOptionSelected).val() !== undefined) {
+
+                if (emailValidationResult && this.validate() && additionalValidators.validate()) {
                     this.isPlaceOrderActionAllowed(false);
                     self.getPlaceOrderDeferredObject().fail(
                         function (response) {
+                            console.error('[Atoa] placeOrder failed', response);
                             errorProcessor.process(response, self.messageContainer);
                             fullScreenLoader.stopLoader();
                             self.isPlaceOrderActionAllowed(true);
                         }
                     ).done(
-                        function (response) {
-                            let serviceUrl = urlBuilder.createUrl(
-                                '/atoa/:orderId/redirect',
+                        function (orderId) {
+                            var serviceUrl = urlBuilder.createUrl(
+                                '/atoa/:orderId/redirect/:paymentType',
                                 {
-                                    orderId: response
+                                    orderId: orderId,
+                                    paymentType: self.getPaymentType()
                                 }
                             );
                             storage.post(serviceUrl).fail(
                                 function (response) {
+                                    console.error('[Atoa] redirect request failed', response);
                                     errorProcessor.process(response, self.messageContainer);
                                     fullScreenLoader.stopLoader();
                                     self.isPlaceOrderActionAllowed(true);
                                 }
                             ).done(
                                 function (response) {
-                                    if (response) {
+                                    if (response && response.redirect_url) {
                                         $.mage.redirect(response.redirect_url);
                                     } else {
+                                        console.error('[Atoa] missing redirect_url in response', response);
                                         errorProcessor.process(response, self.messageContainer);
                                         fullScreenLoader.stopLoader();
                                         self.isPlaceOrderActionAllowed(true);
                                     }
                                 }
                             );
-
                         }
                     );
                     return true;
                 }
-                fullScreenLoader.stopLoader();
-                self.isPlaceOrderActionAllowed(true);
+
+                self.stopPerformingPlaceOrderAction();
                 return false;
             },
 
             /**
              * Start performing place order action,
-             * by disable a place order button and show full screen loader component.
+             * by disabling the place order button and showing full screen loader.
              */
             startPerformingPlaceOrderAction: function () {
                 this.isPlaceOrderActionAllowed(false);
@@ -109,7 +132,7 @@ define(
 
             /**
              * Stop performing place order action,
-             * by disable a place order button and show full screen loader component.
+             * by re-enabling the place order button and hiding the full screen loader.
              */
             stopPerformingPlaceOrderAction: function () {
                 fullScreenLoader.stopLoader();
@@ -129,20 +152,72 @@ define(
                 return window.checkoutConfig.payment.atoa.logoMarkHref;
             },
 
-            getBankLogosSrc: function () {
-                return window.checkoutConfig.payment.atoa.bankLogosHref;
+            /**
+             * All bank logos for the 'atoa' payment method.
+             *
+             * @return {Array<{src: string, alt: string}>}
+             */
+            getBankLogos: function () {
+                return (window.checkoutConfig.payment.atoa.bankConfig || {}).logos || [];
             },
 
-            getMobileBankLogosSrc: function () {
-                return window.checkoutConfig.payment.atoa.mobileBankLogosHref;
+            /**
+             * First N logos shown inline — the rest are in the hover popup.
+             *
+             * @return {Array}
+             */
+            getVisibleBankLogos: function () {
+                return this.getBankLogos().slice(0, 3);
+            },
+
+            /**
+             * Logos that appear only in the hover popup (+N bubble).
+             *
+             * @return {Array}
+             */
+            getHiddenBankLogos: function () {
+                return this.getBankLogos().slice(3);
+            },
+
+            /**
+             * Card logos for the 'atoa_card' payment method.
+             *
+             * @return {Array<{src: string, alt: string}>}
+             */
+            getCardLogos: function () {
+                return (window.checkoutConfig.payment.atoa_card &&
+                    window.checkoutConfig.payment.atoa_card.cardConfig &&
+                    window.checkoutConfig.payment.atoa_card.cardConfig.logos) || [];
             },
 
             getBannerCheckoutText: function () {
-                return window.checkoutConfig.payment.atoa.bannerCheckoutText;
+                var config = window.checkoutConfig.payment[this.getCode()];
+                return (config && config.bannerCheckoutText) ||
+                    window.checkoutConfig.payment.atoa.bannerCheckoutText;
             },
 
             getStyle: function () {
-                return 'atoa-payment-checkout style' + window.checkoutConfig.payment.atoa.style;
+                var config = window.checkoutConfig.payment[this.getCode()];
+                var style = (config && config.style) || window.checkoutConfig.payment.atoa.style;
+                return 'atoa-payment-checkout style' + style;
+            },
+
+            /**
+             * True when this renderer is handling the bank payment method.
+             *
+             * @return {boolean}
+             */
+            isBank: function () {
+                return this.getCode() === 'atoa';
+            },
+
+            /**
+             * True when this renderer is handling the card payment method.
+             *
+             * @return {boolean}
+             */
+            isCard: function () {
+                return this.getCode() === 'atoa_card';
             }
         });
     }

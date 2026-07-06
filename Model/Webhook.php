@@ -7,7 +7,6 @@ use Atoa\AtoaPayment\Api\Data\StatusDetailsDataInterface;
 use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
 use Atoa\AtoaPayment\Api\WebhookInterface;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
@@ -35,7 +34,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param DataObject $redirectUrlParams
+     * @param array $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription
@@ -62,7 +61,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        \Magento\Framework\DataObject $redirectUrlParams,
+        array $redirectUrlParams,
         ?string $redirectUrl,
         ?string $signatureHash = null,
         ?string $errorDescription = null,
@@ -101,7 +100,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
             'payment_request_id' => $paymentRequestId,
             'signature_hash' => $signatureHash,
             'error_description' => $errorDescription,
-            'redirect_url_params' => $redirectUrlParams->getData(),
+            'redirect_url_params' => $redirectUrlParams,
             'redirect_url' => $redirectUrl
         ]);
         $this->logger->info('[WEBHOOK_PARAMS_END]');
@@ -119,7 +118,8 @@ class Webhook extends AbstractWebhook implements WebhookInterface
             ->setPageSize(1)
             ->getFirstItem();
 
-        if (!$order->getId() || $order->getPayment()->getMethod() !== Atoa::CODE) {
+        $method = $order->getPayment() ? $order->getPayment()->getMethod() : null;
+        if (!$order->getId() || !in_array($method, [Atoa::CODE, Atoa::CODE_CARD], true)) {
             $this->logger->info('[PROCESS_WEBHOOK_END]', ['order not found']);
             $this->logger->info('*******************************************************************');
             return $this;

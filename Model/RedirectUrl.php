@@ -58,10 +58,11 @@ class RedirectUrl
      * Request
      *
      * @param Order $order
+     * @param string $paymentType PAY_BY_BANK or CARD
      * @return string
      * @throws NoSuchEntityException
      */
-    public function getRedirectUrl(Order $order): string
+    public function getRedirectUrl(Order $order, string $paymentType = 'PAY_BY_BANK'): string
     {
         $this->logger->info('[REQUEST_REDIRECT]');
         $data = [
@@ -69,7 +70,8 @@ class RedirectUrl
             'orderId' => $order->getIncrementId(),
             'amount' => $order->getGrandTotal(),
             'currency' => $order->getOrderCurrency() ? $order->getOrderCurrency()->getCode() : 'GBP',
-            'paymentType' => 'DOMSETIC',
+            'paymentType' => $paymentType,
+            'paymentMethod' => [$paymentType],
             'autoRedirect' => false,
             'consumerDetails' => [
                 'phoneCountryCode' => CountryPhoneCode::PHONE_CODE[$order->getBillingAddress()->getCountryId()],

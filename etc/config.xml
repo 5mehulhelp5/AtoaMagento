@@ -37,6 +37,27 @@
                     <banner_checkout_text>Pay securely via your Bank app</banner_checkout_text>
                 </atoa_checkout_setting>
             </atoa>
+            <atoa_card>
+                <active>0</active>
+                <model>AtoaCardAdapter</model>
+                <order_status_paid>processing</order_status_paid>
+                <order_status_cancel>canceled</order_status_cancel>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>0</can_capture>
+                <can_review_payment>1</can_review_payment>
+                <payment_action>authorize</payment_action>
+                <order_status>pending</order_status>
+                <title>Atoa Card Payment</title>
+                <allowspecific>0</allowspecific>
+                <sort_order>2</sort_order>
+                <atoa_checkout_setting>
+                    <banner_checkout_text>Pay securely via Card</banner_checkout_text>
+                    <banner_styles>1</banner_styles>
+                </atoa_checkout_setting>
+            </atoa_card>
         </payment>
     </default>
 </config>

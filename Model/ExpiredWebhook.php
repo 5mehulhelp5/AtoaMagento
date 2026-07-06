@@ -75,7 +75,8 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
             ->setPageSize(1)
             ->getFirstItem();
 
-        if (!$order->getId() || $order->getPayment()->getMethod() !== Atoa::CODE) {
+        $method = $order->getPayment() ? $order->getPayment()->getMethod() : null;
+        if (!$order->getId() || !in_array($method, [Atoa::CODE, Atoa::CODE_CARD], true)) {
             $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['order not found']);
             $this->logger->info('*******************************************************************');
             return $this;

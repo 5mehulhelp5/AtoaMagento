@@ -9,6 +9,10 @@ class Atoa
      * @var string
      */
     public const CODE = 'atoa';
+    public const CODE_CARD = 'atoa_card';
+
+    /** @var string[] Allowed values for the paymentType URL parameter */
+    public const ALLOWED_PAYMENT_TYPES = ['PAY_BY_BANK', 'CARD'];
 
     public const IS_SANDBOX = 'is_sandbox';
     public const ACCESS_TOKEN = 'access_token';

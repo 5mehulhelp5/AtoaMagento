@@ -149,6 +149,27 @@
                     </field>
                 </group>
             </group>
+            <group id="atoa_card" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="2" translate="label">
+                <label>Atoa Card Payment</label>
+                <field id="active" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="10" translate="label" type="select">
+                    <label>Enabled</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                    <comment>Requires the main Atoa Bank payment method to be configured first (Access Token is shared).</comment>
+                </field>
+                <field id="title" showInDefault="1" showInStore="1" showInWebsite="1" sortOrder="20" translate="label" type="text">
+                    <label>Title</label>
+                </field>
+                <group id="atoa_checkout_setting" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Checkout Page Setting</label>
+                    <field id="banner_checkout_text" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Banner Checkout Text</label>
+                    </field>
+                    <field id="banner_styles" translate="label" type="select" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                        <label>Styles</label>
+                        <source_model>Atoa\AtoaPayment\Model\Source\Styles</source_model>
+                    </field>
+                </group>
+            </group>
         </section>
     </system>
 </config>

@@ -8,6 +8,7 @@ use Atoa\AtoaPayment\Model\Data\RedirectFactory;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
 use Magento\Checkout\Model\Session;
 use Magento\Framework\Exception\AuthorizationException;
+use Magento\Framework\Exception\InputException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\PaymentException;
 use Magento\Framework\Exception\SessionException;
@@ -51,28 +52,44 @@ class Redirect implements RedirectInterface
      * Redirect
      *
      * @param mixed $orderId
+     * @param string $paymentType
      * @return \Atoa\AtoaPayment\Api\Data\RedirectDataInterface
      * @throws AuthorizationException
+     * @throws InputException
      * @throws LocalizedException
      * @throws PaymentException
      * @throws SessionException
      * @throws \JsonException
      */
-    public function redirect(mixed $orderId)
+    public function redirect(mixed $orderId, string $paymentType = 'PAY_BY_BANK')
     {
-        $order = $this->loadOrder((int)$orderId);
-        if ($payment = $order->getPayment()) {
-            $data = $this->redirectDataFactory->create();
-            if ($payment->getMethod() === Atoa::CODE) {
-                $data->setRedirectUrl($this->redirectUrl->getRedirectUrl($order));
-            }
-            return $data;
+        if (!in_array($paymentType, Atoa::ALLOWED_PAYMENT_TYPES, true)) {
+            throw new InputException(
+                __('Invalid payment type. Allowed values: %1', implode(', ', Atoa::ALLOWED_PAYMENT_TYPES))
+            );
         }
 
-        throw new PaymentException(
-            __('Cannot retrieve a payment detail from the request,
-             please contact our support if you have any questions')
-        );
+        $order = $this->loadOrder((int)$orderId);
+        $payment = $order->getPayment();
+
+        if (!$payment) {
+            throw new PaymentException(
+                __('Cannot retrieve a payment detail from the request,
+                 please contact our support if you have any questions')
+            );
+        }
+
+        $method = $payment->getMethod();
+        if ($method !== Atoa::CODE && $method !== Atoa::CODE_CARD) {
+            throw new PaymentException(
+                __('Cannot retrieve a payment detail from the request,
+                 please contact our support if you have any questions')
+            );
+        }
+
+        $data = $this->redirectDataFactory->create();
+        $data->setRedirectUrl($this->redirectUrl->getRedirectUrl($order, $paymentType));
+        return $data;
     }
 
     /**

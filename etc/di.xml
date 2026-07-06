@@ -98,6 +98,44 @@
         </arguments>
     </virtualType>
 
+    <!-- Card payment method adapter — reuses the same command pool as the bank gateway -->
+    <virtualType name="AtoaCardAdapter" type="Magento\Payment\Model\Method\Adapter">
+        <arguments>
+            <argument name="code" xsi:type="const">Atoa\AtoaPayment\Model\Payment\Atoa::CODE_CARD</argument>
+            <argument name="formBlockType" xsi:type="string">Magento\Payment\Block\Form\Cc</argument>
+            <argument name="infoBlockType" xsi:type="string">Magento\Payment\Block\Info</argument>
+            <argument name="valueHandlerPool" xsi:type="object">AtoaCardValueHandlerPool</argument>
+            <argument name="validatorPool" xsi:type="object">AtoaCardValidatorPool</argument>
+            <argument name="commandPool" xsi:type="object">AtoaCommandPool</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="AtoaCardValueHandlerPool" type="Magento\Payment\Gateway\Config\ValueHandlerPool">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="default" xsi:type="string">AtoaCardConfigValueHandler</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="AtoaCardConfigValueHandler" type="Magento\Payment\Gateway\Config\ConfigValueHandler">
+        <arguments>
+            <argument name="configInterface" xsi:type="object">AtoaCardConfig</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="AtoaCardConfig" type="Magento\Payment\Gateway\Config\Config">
+        <arguments>
+            <argument name="methodCode" xsi:type="const">Atoa\AtoaPayment\Model\Payment\Atoa::CODE_CARD</argument>
+        </arguments>
+    </virtualType>
+
+    <virtualType name="AtoaCardValidatorPool" type="Magento\Payment\Gateway\Validator\ValidatorPool">
+        <arguments>
+            <argument name="validators" xsi:type="array"></argument>
+        </arguments>
+    </virtualType>
+
     <type name="Atoa\AtoaPayment\Logger\AtoaPaymentLogger">
         <arguments>
             <argument name="name" xsi:type="string">atoaPaymentLogger</argument>
