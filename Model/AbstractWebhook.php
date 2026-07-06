@@ -100,12 +100,12 @@ abstract class AbstractWebhook
      * Validate webhook request signature.
      * Tries V2 (X-Atoa-Signature header) first, falls back to V1 (signatureHash param).
      *
-     * @param string $orderId
-     * @param string $paymentRequestId
+     * @param ?string $orderId
+     * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @return bool
      */
-    protected function validateRequest(string $orderId, string $paymentRequestId, ?string $signatureHash): bool
+    protected function validateRequest(?string $orderId, ?string $paymentRequestId, ?string $signatureHash): bool
     {
         $signatureHeader = $this->request->getHeader('X-Atoa-Signature');
 
@@ -115,7 +115,7 @@ abstract class AbstractWebhook
         }
 
         $this->logger->info('[VALIDATE_REQUEST] Using V1 signature verification');
-        if (empty($signatureHash)) {
+        if (empty($orderId) || empty($paymentRequestId) || empty($signatureHash)) {
             $this->logger->info('[VALIDATE_REQUEST] No signature found');
             return false;
         }
