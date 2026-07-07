@@ -34,6 +34,31 @@ define(
                 template: 'Atoa_AtoaPayment/payment/atoa'
             },
 
+            initialize: function () {
+                this._super();
+                this.popupOpen = ko.observable(false);
+
+                var self = this;
+                document.addEventListener('click', function () {
+                    if (self.popupOpen()) {
+                        self.popupOpen(false);
+                    }
+                });
+
+                return this;
+            },
+
+            /**
+             * Toggle the +N popup open/closed (touch support).
+             *
+             * @param {Object} vm
+             * @param {Event} event
+             */
+            togglePopup: function (vm, event) {
+                event.stopPropagation();
+                this.popupOpen(!this.popupOpen());
+            },
+
             /**
              * Returns 'CARD' for the atoa_card method, 'PAY_BY_BANK' for everything else.
              *
@@ -162,12 +187,12 @@ define(
             },
 
             /**
-             * First N logos shown inline — the rest are in the hover popup.
+             * First 4 logos shown inline — the rest are in the hover popup.
              *
              * @return {Array}
              */
             getVisibleBankLogos: function () {
-                return this.getBankLogos().slice(0, 3);
+                return this.getBankLogos().slice(0, 4);
             },
 
             /**
@@ -176,7 +201,7 @@ define(
              * @return {Array}
              */
             getHiddenBankLogos: function () {
-                return this.getBankLogos().slice(3);
+                return this.getBankLogos().slice(4);
             },
 
             /**

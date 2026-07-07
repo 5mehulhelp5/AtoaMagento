@@ -275,37 +275,62 @@
                         .atoa-more {
                             align-items: center;
                             background: #E5E7EB;
-                            border-radius: 50%;
+                            border-radius: 13px;
                             color: #374151;
                             cursor: pointer;
                             display: flex;
                             font-size: 11px;
                             font-weight: 600;
-                            height: 32px;
+                            height: 26px;
                             justify-content: center;
-                            width: 32px;
+                            min-width: 26px;
+                            padding: 0 6px;
+                            white-space: nowrap;
                         }
 
                         .atoa-hidden-logos {
                             background: #fff;
                             border: 1px solid #E5E7EB;
                             border-radius: 8px;
-                            bottom: 42px;
+                            bottom: calc(100% + 6px);
                             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
                             display: none;
                             flex-wrap: wrap;
                             gap: 6px;
-                            left: 50%;
+                            left: auto;
+                            max-width: 220px;
                             padding: 8px;
                             position: absolute;
-                            transform: translateX(-50%);
-                            width: max-content;
+                            right: 0;
+                            transform: none;
                             z-index: 100;
                         }
 
-                        &:hover .atoa-hidden-logos {
+                        @media (hover: hover) {
+                            &:hover .atoa-hidden-logos {
+                                display: flex;
+                            }
+                        }
+
+                        &.is-open .atoa-hidden-logos {
                             display: flex;
                         }
+                    }
+
+                    .atoa-card-logo-wrapper {
+                        align-items: center;
+                        border-radius: 4px;
+                        display: flex;
+                        height: 28px;
+                        justify-content: center;
+                        overflow: hidden;
+                        width: 44px;
+                    }
+
+                    .atoa-card-logo {
+                        height: 28px;
+                        object-fit: contain;
+                        width: 44px;
                     }
                 }
 
@@ -518,10 +543,23 @@
 
                     .atoa-more-wrapper {
                         .atoa-more {
+                            border-radius: 11px;
                             font-size: 10px;
-                            height: 24px;
-                            width: 24px;
+                            height: 22px;
+                            min-width: 22px;
+                            padding: 0 4px;
+                            width: auto;
                         }
+                    }
+
+                    .atoa-card-logo-wrapper {
+                        height: 22px;
+                        width: 34px;
+                    }
+
+                    .atoa-card-logo {
+                        height: 22px;
+                        width: 34px;
                     }
                 }
             }

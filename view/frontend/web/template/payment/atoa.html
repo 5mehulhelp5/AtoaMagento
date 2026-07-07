@@ -18,7 +18,7 @@
                     <span data-bind="text: getBannerCheckoutText()"></span>
                 </span>
 
-                <!-- Bank logos (atoa) — first 3 inline, rest in hover popup -->
+                <!-- Bank logos (atoa) — first 4 inline, rest in hover popup -->
                 <!-- ko if: isBank() -->
                 <span class="bank-support">
                     <!-- ko foreach: getVisibleBankLogos() -->
@@ -28,7 +28,8 @@
                     </span>
                     <!-- /ko -->
                     <!-- ko if: getHiddenBankLogos().length > 0 -->
-                    <span class="atoa-more-wrapper">
+                    <span class="atoa-more-wrapper"
+                          data-bind="css: {'is-open': popupOpen}, click: togglePopup">
                         <span class="atoa-more">
                             +<!-- ko text: getHiddenBankLogos().length --><!-- /ko -->
                         </span>
@@ -49,8 +50,8 @@
                 <!-- ko if: isCard() -->
                 <span class="bank-support">
                     <!-- ko foreach: getCardLogos() -->
-                    <span class="atoa-logo-wrapper">
-                        <img class="atoa-bank-logo atoa-card-logo"
+                    <span class="atoa-card-logo-wrapper">
+                        <img class="atoa-card-logo"
                              data-bind="attr: { src: $data.src, alt: $data.alt }" />
                     </span>
                     <!-- /ko -->

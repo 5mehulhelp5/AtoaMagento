@@ -26,20 +26,28 @@ class AtoaConfigProvider implements ConfigProviderInterface
     private ConfigProvider $configProvider;
 
     /**
+     * @var InstitutionsService
+     */
+    private InstitutionsService $institutionsService;
+
+    /**
      * Atoa Config Provider construct.
      *
      * @param RequestInterface $request
      * @param Repository $assetRepo
      * @param ConfigProvider $configProvider
+     * @param InstitutionsService $institutionsService
      */
     public function __construct(
         RequestInterface $request,
         Repository $assetRepo,
-        ConfigProvider $configProvider
+        ConfigProvider $configProvider,
+        InstitutionsService $institutionsService
     ) {
-        $this->request = $request;
-        $this->assetRepo = $assetRepo;
-        $this->configProvider = $configProvider;
+        $this->request             = $request;
+        $this->assetRepo           = $assetRepo;
+        $this->configProvider      = $configProvider;
+        $this->institutionsService = $institutionsService;
     }
 
     /**
@@ -52,7 +60,7 @@ class AtoaConfigProvider implements ConfigProviderInterface
                 Atoa::CODE => [
                     'logoMarkHref' => $this->getAssetUrl('Atoa_AtoaPayment/images/atoa-claret-icon.png'),
                     'bankConfig'   => [
-                        'logos' => $this->getBankLogos(),
+                        'logos' => $this->institutionsService->getBankLogos(),
                     ],
                     'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
                         Atoa::CODE,
@@ -81,32 +89,6 @@ class AtoaConfigProvider implements ConfigProviderInterface
     }
 
     /**
-     * Return individual bank logo configs for the checkout UI.
-     *
-     * @return array<int, array{src: string, alt: string}>
-     */
-    private function getBankLogos(): array
-    {
-        $banks = [
-            ['file' => 'monzo.webp',           'alt' => 'Monzo'],
-            ['file' => 'barclays.webp',         'alt' => 'Barclays'],
-            ['file' => 'natwest.webp',           'alt' => 'NatWest'],
-            ['file' => 'hsbc.webp',             'alt' => 'HSBC'],
-            ['file' => 'bank_of_scotland.webp', 'alt' => 'Bank of Scotland'],
-            ['file' => 'lloyds.webp',           'alt' => 'Lloyds'],
-            ['file' => 'santander.webp',        'alt' => 'Santander'],
-            ['file' => 'tsb.webp',              'alt' => 'TSB'],
-        ];
-
-        return array_map(function (array $bank): array {
-            return [
-                'src' => $this->getAssetUrl('Atoa_AtoaPayment/images/banks/' . $bank['file']),
-                'alt' => $bank['alt'],
-            ];
-        }, $banks);
-    }
-
-    /**
      * Return card logo configs for the checkout UI.
      *
      * @return array<int, array{src: string, alt: string}>
@@ -114,8 +96,10 @@ class AtoaConfigProvider implements ConfigProviderInterface
     private function getCardLogos(): array
     {
         $cards = [
-            ['file' => 'visa.svg',   'alt' => 'Visa'],
-            ['file' => 'master.svg', 'alt' => 'Mastercard'],
+            ['file' => 'visa.svg',      'alt' => 'Visa'],
+            ['file' => 'master.svg',    'alt' => 'Mastercard'],
+            ['file' => 'g_pay.svg',     'alt' => 'Google Pay'],
+            ['file' => 'apple_pay.svg', 'alt' => 'Apple Pay'],
         ];
 
         return array_map(function (array $card): array {
