@@ -265,10 +265,6 @@
                         width: 32px;
                     }
 
-                    .atoa-card-logo {
-                        object-fit: contain;
-                    }
-
                     .atoa-more-wrapper {
                         position: relative;
 
@@ -304,12 +300,6 @@
                             right: 0;
                             transform: none;
                             z-index: 100;
-                        }
-
-                        @media (hover: hover) {
-                            &:hover .atoa-hidden-logos {
-                                display: flex;
-                            }
                         }
 
                         &.is-open .atoa-hidden-logos {
@@ -400,6 +390,14 @@
                 margin: 0 -12px;
             }
         }
+    }
+}
+
+// Desktop hover — only on devices that support true pointer hover.
+// Must be at the top level; @media cannot nest inside & when() guards.
+@media (hover: hover) {
+    .atoa-payment-title .atoa-payment-label .atoa-payment-checkout .bank-support .atoa-more-wrapper:hover .atoa-hidden-logos {
+        display: flex;
     }
 }
 
