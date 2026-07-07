@@ -202,6 +202,11 @@
         display: flex;
         gap: 5px;
 
+        .radio {
+            flex-shrink: 0;
+            margin-top: 5px;
+        }
+
         .atoa-payment-label {
             width: 100%;
 
@@ -220,18 +225,18 @@
 
                     .atoa-logo-wrapper {
                         align-items: center;
-                        border-radius: 50%;
+                        border-radius: 6px;
                         display: flex;
-                        height: 32px;
+                        height: 28px;
                         justify-content: center;
                         overflow: hidden;
-                        width: 32px;
+                        width: 28px;
                     }
 
                     .atoa-bank-logo {
-                        height: 32px;
+                        height: 24px;
                         object-fit: cover;
-                        width: 32px;
+                        width: 24px;
                     }
 
                     .atoa-more-wrapper {
@@ -311,7 +316,7 @@
                 border: 2px solid;
                 border-radius: 20px;
                 display: block;
-                margin-top: 10px;
+                margin-top: 14px;
                 overflow: hidden;
 
                 .payment-text {
@@ -321,7 +326,7 @@
                     font-size: 18px;
                     font-weight: bold;
                     justify-content: space-between;
-                    padding: 15px 20px 15px 70px;
+                    padding: 10px 20px 10px 70px;
                     position: relative;
 
                     &:before {
@@ -572,7 +577,7 @@
             .atoa-payment-checkout {
                 .payment-text {
                     font-size: 14px;
-                    padding: 12px 15px 12px 45px;
+                    padding: 10px 10px 10px 40px;
 
                     &:before {
                         background-size: 24px auto;
