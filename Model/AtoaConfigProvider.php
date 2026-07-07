@@ -54,13 +54,27 @@ class AtoaConfigProvider implements ConfigProviderInterface
                     'bankConfig'   => [
                         'logos' => $this->getBankLogos(),
                     ],
-                    'bannerCheckoutText' => $this->configProvider->getConfig(Atoa::BANNER_CHECKOUT_TEXT),
-                    'style'              => $this->configProvider->getConfig(Atoa::BANNER_CHECKOUT_STYLES),
+                    'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE,
+                        Atoa::BANNER_CHECKOUT_TEXT
+                    ),
+                    'style'              => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE,
+                        Atoa::BANNER_CHECKOUT_STYLES
+                    ),
                 ],
                 Atoa::CODE_CARD => [
-                    'cardConfig' => [
+                    'cardConfig'         => [
                         'logos' => $this->getCardLogos(),
                     ],
+                    'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE_CARD,
+                        Atoa::BANNER_CHECKOUT_TEXT
+                    ),
+                    'style'              => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE_CARD,
+                        Atoa::BANNER_CHECKOUT_STYLES
+                    ),
                 ],
             ]
         ];
