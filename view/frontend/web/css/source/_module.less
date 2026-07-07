@@ -203,43 +203,13 @@
         gap: 5px;
 
         .atoa-payment-label {
-            .atoa-payment-checkout {
-                border: 2px solid;
-                border-radius: 20px;
-                display: block;
-                margin-top: 10px;
-                overflow: hidden;
+            width: 100%;
 
-                .payment-text {
-                    align-items: center;
-                    box-sizing: border-box;
-                    display: flex;
-                    font-size: 18px;
-                    font-weight: bold;
-                    justify-content: space-between;
-                    padding: 10px 20px 10px 70px;
-                    position: relative;
-
-                    &:before {
-                        background-image: url('@{baseDir}Atoa_AtoaPayment/images/lock-caret-icon@2x.png');
-                        background-size: 33px auto;
-                        content: '';
-                        display: block;
-                        height: 33px;
-                        left: 20px;
-                        margin-top: -16px;
-                        position: absolute;
-                        top: 50%;
-                        width: 33px;
-                    }
-
-                    .icon {
-                        background-size: 80px auto;
-                        display: inline-block;
-                        height: 33px;
-                        width: 80px;
-                    }
-                }
+            .atoa-method-header {
+                align-items: center;
+                display: flex;
+                justify-content: space-between;
+                width: 100%;
 
                 .bank-support {
                     align-items: center;
@@ -247,7 +217,6 @@
                     display: flex;
                     flex-wrap: wrap;
                     gap: 6px;
-                    padding: 10px 20px;
 
                     .atoa-logo-wrapper {
                         align-items: center;
@@ -323,6 +292,45 @@
                         width: 44px;
                     }
                 }
+            }
+
+            .atoa-payment-checkout {
+                border: 2px solid;
+                border-radius: 20px;
+                display: block;
+                margin-top: 10px;
+                overflow: hidden;
+
+                .payment-text {
+                    align-items: center;
+                    box-sizing: border-box;
+                    display: flex;
+                    font-size: 18px;
+                    font-weight: bold;
+                    justify-content: space-between;
+                    padding: 10px 20px 10px 70px;
+                    position: relative;
+
+                    &:before {
+                        background-image: url('@{baseDir}Atoa_AtoaPayment/images/lock-caret-icon@2x.png');
+                        background-size: 33px auto;
+                        content: '';
+                        display: block;
+                        height: 33px;
+                        left: 20px;
+                        margin-top: -16px;
+                        position: absolute;
+                        top: 50%;
+                        width: 33px;
+                    }
+
+                    .icon {
+                        background-size: 80px auto;
+                        display: inline-block;
+                        height: 33px;
+                        width: 80px;
+                    }
+                }
 
                 &.style1 {
                     border-color: @atoa-primary-color;
@@ -396,7 +404,7 @@
 // Desktop hover — only on devices that support true pointer hover.
 // Must be at the top level; @media cannot nest inside & when() guards.
 @media (hover: hover) {
-    .atoa-payment-title .atoa-payment-label .atoa-payment-checkout .bank-support .atoa-more-wrapper:hover .atoa-hidden-logos {
+    .atoa-payment-title .atoa-payment-label .atoa-method-header .bank-support .atoa-more-wrapper:hover .atoa-hidden-logos {
         display: flex;
     }
 }
@@ -509,29 +517,9 @@
     }
     .atoa-payment-title {
         .atoa-payment-label {
-            .atoa-payment-checkout {
-                .payment-text {
-                    font-size: 14px;
-                    padding: 10px 10px 10px 40px;
-
-                    &:before {
-                        background-size: 24px auto;
-                        height: 24px;
-                        left: 10px;
-                        margin-top: -12px;
-                        width: 24px;
-                    }
-
-                    .icon {
-                        background-size: 35px auto;
-                        height: 15px;
-                        width: 35px;
-                    }
-                }
-
+            .atoa-method-header {
                 .bank-support {
                     gap: 4px;
-                    padding: 8px 10px;
 
                     .atoa-logo-wrapper,
                     .atoa-bank-logo {
@@ -558,6 +546,27 @@
                     .atoa-card-logo {
                         height: 22px;
                         width: 34px;
+                    }
+                }
+            }
+
+            .atoa-payment-checkout {
+                .payment-text {
+                    font-size: 14px;
+                    padding: 10px 10px 10px 40px;
+
+                    &:before {
+                        background-size: 24px auto;
+                        height: 24px;
+                        left: 10px;
+                        margin-top: -12px;
+                        width: 24px;
+                    }
+
+                    .icon {
+                        background-size: 35px auto;
+                        height: 15px;
+                        width: 35px;
                     }
                 }
             }

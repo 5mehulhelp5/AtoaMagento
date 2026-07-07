@@ -12,11 +12,8 @@
                "
         ></input>
         <label data-bind="attr: {'for': getCode()}" class="atoa-payment-label">
-            <span data-bind="text: getTitle()"></span>
-            <span data-bind="attr: { class: getStyle() }">
-                <span class="payment-text">
-                    <span data-bind="text: getBannerCheckoutText()"></span>
-                </span>
+            <span class="atoa-method-header">
+                <span data-bind="text: getTitle()"></span>
 
                 <!-- Bank logos (atoa) — first 4 inline, rest in hover popup -->
                 <!-- ko if: isBank() -->
@@ -57,7 +54,12 @@
                     <!-- /ko -->
                 </span>
                 <!-- /ko -->
+            </span>
 
+            <span data-bind="attr: { class: getStyle() }">
+                <span class="payment-text">
+                    <span data-bind="text: getBannerCheckoutText()"></span>
+                </span>
             </span>
         </label>
     </div>
