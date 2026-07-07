@@ -254,25 +254,38 @@
                         }
 
                         .atoa-hidden-logos {
-                            background: #fff;
-                            border: 1px solid #E5E7EB;
-                            border-radius: 8px;
+                            background: #1a1a1a;
+                            border-radius: 10px;
                             bottom: calc(100% + 6px);
-                            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+                            box-sizing: border-box;
                             display: none;
-                            flex-wrap: wrap;
                             gap: 6px;
-                            left: auto;
-                            max-width: 220px;
+                            grid-template-columns: repeat(6, 28px);
+                            left: 50%;
+                            max-height: 170px;
+                            overflow-y: auto;
                             padding: 8px;
                             position: absolute;
-                            right: 0;
-                            transform: none;
-                            z-index: 100;
+                            transform: translateX(-50%);
+                            width: 214px;
+                            z-index: 9999;
+
+                            .atoa-logo-wrapper {
+                                border-radius: 6px;
+                                height: 28px;
+                                width: 28px;
+                            }
+
+                            .atoa-bank-logo {
+                                border-radius: 6px;
+                                height: 24px;
+                                width: 24px;
+                            }
                         }
 
                         &.is-open .atoa-hidden-logos {
-                            display: flex;
+                            display: grid;
                         }
                     }
 
@@ -308,7 +321,7 @@
                     font-size: 18px;
                     font-weight: bold;
                     justify-content: space-between;
-                    padding: 10px 20px 10px 70px;
+                    padding: 15px 20px 15px 70px;
                     position: relative;
 
                     &:before {
@@ -405,7 +418,7 @@
 // Must be at the top level; @media cannot nest inside & when() guards.
 @media (hover: hover) {
     .atoa-payment-title .atoa-payment-label .atoa-method-header .bank-support .atoa-more-wrapper:hover .atoa-hidden-logos {
-        display: flex;
+        display: grid;
     }
 }
 
@@ -536,6 +549,12 @@
                             padding: 0 4px;
                             width: auto;
                         }
+
+                        .atoa-hidden-logos {
+                            left: auto;
+                            right: 0;
+                            transform: none;
+                        }
                     }
 
                     .atoa-card-logo-wrapper {
@@ -553,7 +572,7 @@
             .atoa-payment-checkout {
                 .payment-text {
                     font-size: 14px;
-                    padding: 10px 10px 10px 40px;
+                    padding: 12px 15px 12px 45px;
 
                     &:before {
                         background-size: 24px auto;
