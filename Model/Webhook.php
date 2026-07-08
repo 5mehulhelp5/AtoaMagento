@@ -182,11 +182,15 @@ class Webhook extends AbstractWebhook implements WebhookInterface
 
         $this->resourceOrder->save($order);
         if ($order->getState() === Order::STATE_CANCELED) {
-            $this->orderSender->send(
-                $order,
-                true,
-                __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
-            );
+            try {
+                $this->orderSender->send(
+                    $order,
+                    true,
+                    __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
+                );
+            } catch (\Exception $e) {
+                $this->logger->info('[PROCESS_WEBHOOK_END] Email send failed: ' . $e->getMessage());
+            }
         }
         $this->logger->info('[PROCESS_WEBHOOK_END]', ['process order successfully']);
         $this->logger->info('*******************************************************************');
