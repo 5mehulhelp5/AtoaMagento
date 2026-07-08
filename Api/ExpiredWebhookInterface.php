@@ -38,4 +38,11 @@ interface ExpiredWebhookInterface
         ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface;
+
+    /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string;
 }

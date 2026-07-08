@@ -58,4 +58,11 @@ interface WebhookInterface
         ?string $errorDescription = null,
         ?string $eventType = null
     ): WebhookInterface;
+
+    /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string;
 }

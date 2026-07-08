@@ -106,7 +106,9 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         $this->logger->info('[WEBHOOK_PARAMS_END]');
 
         if (!$this->isMagentoPaymentWebhook($redirectUrlParams)) {
-            $this->logger->info('[PROCESS_WEBHOOK_END]', ['source mismatch — not a magento payment webhook']);
+            $got = is_array($redirectUrlParams) ? (strtolower($redirectUrlParams['source'] ?? '') ?: 'none') : 'none';
+            $this->message = sprintf('Webhook ignored: expected source "%s", received "%s".', Atoa::SOURCE, $got);
+            $this->logger->info('[PROCESS_WEBHOOK_END] ' . $this->message);
             $this->logger->info('*******************************************************************');
             return $this;
         }

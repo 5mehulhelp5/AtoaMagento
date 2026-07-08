@@ -62,6 +62,11 @@ abstract class AbstractWebhook
     protected HttpRequest $request;
 
     /**
+     * @var ?string
+     */
+    protected ?string $message = null;
+
+    /**
      * Webhook construct.
      *
      * @param ConfigProvider $configProvider
@@ -94,6 +99,16 @@ abstract class AbstractWebhook
         $this->orderSender = $orderSender;
         $this->checkoutSession = $checkoutSession;
         $this->request = $request;
+    }
+
+    /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
     }
 
     /**
