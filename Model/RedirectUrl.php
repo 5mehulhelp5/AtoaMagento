@@ -5,6 +5,7 @@ namespace Atoa\AtoaPayment\Model;
 
 use Atoa\AtoaPayment\Logger\AtoaPaymentLogger;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\HTTP\Client\CurlFactory;
 use Magento\Sales\Model\Order;
@@ -60,6 +61,7 @@ class RedirectUrl
      * @param Order $order
      * @param string $paymentType PAY_BY_BANK or CARD
      * @return string
+     * @throws LocalizedException
      * @throws NoSuchEntityException
      */
     public function getRedirectUrl(Order $order, string $paymentType = 'PAY_BY_BANK'): string
@@ -98,8 +100,21 @@ class RedirectUrl
         );
         $curl->post(self::END_POINT, json_encode($data));
 
-        $response = json_decode($curl->getBody(), true);
-        $this->logger->info('[RESPONSE_REDIRECT]', $response);
+        $statusCode = $curl->getStatus();
+        $response   = json_decode($curl->getBody(), true);
+
+        $this->logger->info('[RESPONSE_REDIRECT]', $response ?? []);
+
+        if ($statusCode === 401) {
+            throw new LocalizedException(
+                __('Payment initiation failed: invalid API key. Please check your Atoa configuration.')
+            );
+        }
+
+        if ($statusCode !== 200 || empty($response['paymentUrl'])) {
+            $message = $response['message'] ?? 'Unable to initiate payment. Please try again.';
+            throw new LocalizedException(__($message));
+        }
 
         return $response['paymentUrl'];
     }
