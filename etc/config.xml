@@ -24,15 +24,11 @@
                     <enable_store_view_banner>1</enable_store_view_banner>
                     <enable_banner_product_listing>1</enable_banner_product_listing>
                     <enable_banner_product_detail>1</enable_banner_product_detail>
-                    <enable_banner_checkout>1</enable_banner_checkout>
                     <enable_information_popup>1</enable_information_popup>
-                    <banner_content_text>{{logo}}Pay using &amp; win cashback</banner_content_text>
+                    <banner_content_text>{{logo}}Pay with Atoa</banner_content_text>
                     <banner_styles>1</banner_styles>
                 </atoa_display_settings>
                 <atoa_checkout_setting>
-                    <show_atoa_cashback>0</show_atoa_cashback>
-                    <enable_claim_reward>0</enable_claim_reward>
-                    <enable_banner_checkout>0</enable_banner_checkout>
                     <banner_styles>1</banner_styles>
                     <banner_checkout_text>Pay instantly from your bank app. Safe and simple.</banner_checkout_text>
                 </atoa_checkout_setting>
