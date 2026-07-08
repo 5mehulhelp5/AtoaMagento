@@ -34,7 +34,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param array $redirectUrlParams
+     * @param mixed $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription
@@ -61,7 +61,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        array $redirectUrlParams,
+        mixed $redirectUrlParams,
         ?string $redirectUrl,
         ?string $signatureHash = null,
         ?string $errorDescription = null,
@@ -104,6 +104,12 @@ class Webhook extends AbstractWebhook implements WebhookInterface
             'redirect_url' => $redirectUrl
         ]);
         $this->logger->info('[WEBHOOK_PARAMS_END]');
+
+        if (!$this->isMagentoPaymentWebhook($redirectUrlParams)) {
+            $this->logger->info('[PROCESS_WEBHOOK_END]', ['source mismatch — not a magento payment webhook']);
+            $this->logger->info('*******************************************************************');
+            return $this;
+        }
 
         if (!$this->validateRequest($orderId, $paymentRequestId, $signatureHash)) {
             $this->logger->info('[PROCESS_WEBHOOK_END]', ['signature hash not match']);

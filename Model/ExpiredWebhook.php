@@ -23,8 +23,9 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param mixed $redirectUrlParams
+     * @param ?string $signatureHash
      * @param ?string $eventType
      * @return ExpiredWebhookInterface
      * @throws AlreadyExistsException
@@ -39,6 +40,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         ?string $orderId,
         ?string $paymentRequestId,
         ?string $redirectUrl,
+        mixed $redirectUrlParams = null,
         ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface {
@@ -57,10 +59,17 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
             ],
             'order_id' => $orderId,
             'payment_request_id' => $paymentRequestId,
+            'redirect_url_params' => $redirectUrlParams,
             'signature_hash' => $signatureHash,
             'redirect_url' => $redirectUrl
         ]);
         $this->logger->info('[EXPIRED_WEBHOOK_PARAMS_END]');
+
+        if (!$this->isMagentoPaymentWebhook($redirectUrlParams)) {
+            $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['source mismatch — not a magento payment webhook']);
+            $this->logger->info('*******************************************************************');
+            return $this;
+        }
 
         if (!$this->validateRequest($orderId, $paymentRequestId, $signatureHash)) {
             $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['signature hash not match']);

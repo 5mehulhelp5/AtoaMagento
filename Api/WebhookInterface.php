@@ -27,7 +27,7 @@ interface WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param mixed[] $redirectUrlParams
+     * @param mixed $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription
@@ -52,7 +52,7 @@ interface WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        array $redirectUrlParams,
+        mixed $redirectUrlParams,
         ?string $redirectUrl,
         ?string $signatureHash = null,
         ?string $errorDescription = null,

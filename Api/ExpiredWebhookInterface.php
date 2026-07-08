@@ -18,8 +18,9 @@ interface ExpiredWebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param mixed $redirectUrlParams
+     * @param ?string $signatureHash
      * @param ?string $eventType
      * @return ExpiredWebhookInterface
      */
@@ -33,6 +34,7 @@ interface ExpiredWebhookInterface
         ?string $orderId,
         ?string $paymentRequestId,
         ?string $redirectUrl,
+        mixed $redirectUrlParams = null,
         ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface;

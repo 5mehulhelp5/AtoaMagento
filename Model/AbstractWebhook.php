@@ -97,6 +97,21 @@ abstract class AbstractWebhook
     }
 
     /**
+     * Returns true only if the webhook originated from this Magento plugin.
+     * Compares redirectUrlParams['source'] (case-insensitive) against Atoa::SOURCE.
+     *
+     * @param mixed $redirectUrlParams
+     * @return bool
+     */
+    protected function isMagentoPaymentWebhook(mixed $redirectUrlParams): bool
+    {
+        if (!is_array($redirectUrlParams)) {
+            return false;
+        }
+        return strtolower($redirectUrlParams['source'] ?? '') === Atoa::SOURCE;
+    }
+
+    /**
      * Validate webhook request signature.
      * Tries V2 (X-Atoa-Signature header) first, falls back to V1 (signatureHash param).
      *

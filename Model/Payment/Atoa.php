@@ -33,6 +33,8 @@ class Atoa
     public const BANNER_CHECKOUT_TEXT = 'atoa_checkout_setting/banner_checkout_text';
     public const BANNER_CONTENT_TEXT = 'atoa_display_settings/banner_content_text';
 
+    public const SOURCE = 'magento';
+
     public const PAYMENT_STATUS_COMPLETED = 'COMPLETED';
     public const PAYMENT_STATUS_PENDING = 'PENDING';
     public const PAYMENT_STATUS_FAILED = 'FAILED';
