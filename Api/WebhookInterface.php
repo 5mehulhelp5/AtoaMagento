@@ -27,7 +27,7 @@ interface WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param DataObject $redirectUrlParams
+     * @param mixed[] $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription

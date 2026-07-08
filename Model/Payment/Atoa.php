@@ -14,6 +14,7 @@ class Atoa
     /** @var string[] Allowed values for the paymentType URL parameter */
     public const ALLOWED_PAYMENT_TYPES = ['PAY_BY_BANK', 'CARD'];
 
+    public const ACTIVE = 'active';
     public const IS_SANDBOX = 'is_sandbox';
     public const ACCESS_TOKEN = 'access_token';
     public const WEBHOOK_URL = 'webhook_url';

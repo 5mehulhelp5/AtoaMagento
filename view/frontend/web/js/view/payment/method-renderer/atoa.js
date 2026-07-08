@@ -39,13 +39,19 @@ define(
                 this.popupOpen = ko.observable(false);
 
                 var self = this;
-                document.addEventListener('click', function () {
+                this._onDocumentClick = function () {
                     if (self.popupOpen()) {
                         self.popupOpen(false);
                     }
-                });
+                };
+                document.addEventListener('click', this._onDocumentClick);
 
                 return this;
+            },
+
+            destroy: function () {
+                document.removeEventListener('click', this._onDocumentClick);
+                this._super();
             },
 
             /**
@@ -57,6 +63,20 @@ define(
             togglePopup: function (vm, event) {
                 event.stopPropagation();
                 this.popupOpen(!this.popupOpen());
+            },
+
+            /**
+             * Keyboard handler for the +N popup — opens/closes on Enter or Space.
+             *
+             * @param {Object} vm
+             * @param {KeyboardEvent} event
+             */
+            onPopupKeydown: function (vm, event) {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    this.togglePopup(vm, event);
+                }
+                return true;
             },
 
             /**
@@ -104,7 +124,6 @@ define(
                     this.isPlaceOrderActionAllowed(false);
                     self.getPlaceOrderDeferredObject().fail(
                         function (response) {
-                            console.error('[Atoa] placeOrder failed', response);
                             errorProcessor.process(response, self.messageContainer);
                             fullScreenLoader.stopLoader();
                             self.isPlaceOrderActionAllowed(true);
@@ -120,7 +139,6 @@ define(
                             );
                             storage.post(serviceUrl).fail(
                                 function (response) {
-                                    console.error('[Atoa] redirect request failed', response);
                                     errorProcessor.process(response, self.messageContainer);
                                     fullScreenLoader.stopLoader();
                                     self.isPlaceOrderActionAllowed(true);
@@ -130,8 +148,9 @@ define(
                                     if (response && response.redirect_url) {
                                         $.mage.redirect(response.redirect_url);
                                     } else {
-                                        console.error('[Atoa] missing redirect_url in response', response);
-                                        errorProcessor.process(response, self.messageContainer);
+                                        self.messageContainer.addErrorMessage({
+                                            message: $.mage.__('Something went wrong. Please try again.')
+                                        });
                                         fullScreenLoader.stopLoader();
                                         self.isPlaceOrderActionAllowed(true);
                                     }

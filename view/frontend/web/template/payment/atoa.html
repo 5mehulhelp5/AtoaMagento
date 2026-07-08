@@ -26,7 +26,9 @@
                     <!-- /ko -->
                     <!-- ko if: getHiddenBankLogos().length > 0 -->
                     <span class="atoa-more-wrapper"
-                          data-bind="css: {'is-open': popupOpen}, click: togglePopup">
+                          tabindex="0"
+                          role="button"
+                          data-bind="css: {'is-open': popupOpen}, click: togglePopup, event: {keydown: onPopupKeydown}">
                         <span class="atoa-more">
                             +<!-- ko text: getHiddenBankLogos().length --><!-- /ko -->
                         </span>

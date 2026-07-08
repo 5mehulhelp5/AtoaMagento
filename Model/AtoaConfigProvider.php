@@ -60,7 +60,9 @@ class AtoaConfigProvider implements ConfigProviderInterface
                 Atoa::CODE => [
                     'logoMarkHref' => $this->getAssetUrl('Atoa_AtoaPayment/images/atoa-claret-icon.png'),
                     'bankConfig'   => [
-                        'logos' => $this->institutionsService->getBankLogos(),
+                        'logos' => $this->configProvider->getConfigForMethod(Atoa::CODE, Atoa::ACTIVE)
+                            ? $this->safeGetBankLogos()
+                            : [],
                     ],
                     'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
                         Atoa::CODE,
@@ -86,6 +88,21 @@ class AtoaConfigProvider implements ConfigProviderInterface
                 ],
             ]
         ];
+    }
+
+    /**
+     * Safely fetch bank logos, returning an empty array on any failure.
+     * Prevents a corrupted cache entry or API error from breaking window.checkoutConfig.
+     *
+     * @return array<int, array{src: string, alt: string}>
+     */
+    private function safeGetBankLogos(): array
+    {
+        try {
+            return $this->institutionsService->getBankLogos();
+        } catch (\Exception $e) {
+            return [];
+        }
     }
 
     /**

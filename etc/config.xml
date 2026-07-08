@@ -34,7 +34,7 @@
                     <enable_claim_reward>0</enable_claim_reward>
                     <enable_banner_checkout>0</enable_banner_checkout>
                     <banner_styles>1</banner_styles>
-                    <banner_checkout_text>Pay securely via your Bank app</banner_checkout_text>
+                    <banner_checkout_text>Pay instantly from your bank app. Safe and simple.</banner_checkout_text>
                 </atoa_checkout_setting>
             </atoa>
             <atoa_card>
@@ -54,7 +54,7 @@
                 <allowspecific>0</allowspecific>
                 <sort_order>2</sort_order>
                 <atoa_checkout_setting>
-                    <banner_checkout_text>Pay securely via Card</banner_checkout_text>
+                    <banner_checkout_text>Pay securely with your card, Apple Pay or Google Pay.</banner_checkout_text>
                     <banner_styles>1</banner_styles>
                 </atoa_checkout_setting>
             </atoa_card>

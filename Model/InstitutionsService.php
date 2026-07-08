@@ -9,9 +9,10 @@ use Magento\Framework\Serialize\Serializer\Json;
 
 class InstitutionsService
 {
-    private const INSTITUTIONS_URL = 'https://api.atoa.me/api/institutions/customer';
-    private const CACHE_KEY        = 'atoa_bank_logos';
-    private const CACHE_LIFETIME   = 86400; // 1 day
+    private const INSTITUTIONS_URL        = 'https://api.atoa.me/api/institutions/customer';
+    private const CACHE_KEY               = 'atoa_bank_logos';
+    private const CACHE_LIFETIME          = 86400; // 1 day
+    private const CACHE_LIFETIME_ON_ERROR = 300;   // 5 min — retry quickly after API failures
 
     private CurlFactory $curlFactory;
     private CacheInterface $cache;
@@ -38,16 +39,21 @@ class InstitutionsService
         $cached = $this->cache->load(self::CACHE_KEY);
 
         if ($cached !== false) {
-            return $this->serializer->unserialize($cached);
+            try {
+                return $this->serializer->unserialize($cached);
+            } catch (\Exception $e) {
+                // Corrupted cache entry — fall through and rebuild.
+            }
         }
 
-        $logos = $this->buildBankLogos();
+        $logos    = $this->buildBankLogos();
+        $lifetime = $logos === [] ? self::CACHE_LIFETIME_ON_ERROR : self::CACHE_LIFETIME;
 
         $this->cache->save(
             $this->serializer->serialize($logos),
             self::CACHE_KEY,
             [],
-            self::CACHE_LIFETIME
+            $lifetime
         );
 
         return $logos;
@@ -93,6 +99,8 @@ class InstitutionsService
     {
         try {
             $curl = $this->curlFactory->create();
+            $curl->setTimeout(5);
+            $curl->setOptions([CURLOPT_CONNECTTIMEOUT => 5]);
             $curl->get(self::INSTITUTIONS_URL);
 
             if ($curl->getStatus() !== 200) {

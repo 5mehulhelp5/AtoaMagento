@@ -81,6 +81,9 @@ class RedirectUrl
                 'lastName' => $order->getBillingAddress()->getLastname()
             ],
             'redirectUrl' => $this->storeManager->getStore()->getBaseUrl() . 'atoa/callback',
+            'callbackParams' => [
+                'source' => 'magento',
+            ],
         ];
         $this->logger->info('[REQUEST_END_POINT]', [self::END_POINT]);
         $this->logger->info('[REQUEST_PARAMS]', [$data]);

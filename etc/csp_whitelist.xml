@@ -4,7 +4,7 @@
     <policies>
         <policy id="img-src">
             <values>
-                <value id="atoa-static-images" type="host">*.s3.eu-west-2.amazonaws.com</value>
+                <value id="atoa-static-images" type="host">atoa-static-images.s3.eu-west-2.amazonaws.com</value>
             </values>
         </policy>
     </policies>
