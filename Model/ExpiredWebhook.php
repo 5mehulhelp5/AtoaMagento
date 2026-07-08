@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Atoa\AtoaPayment\Model;
 
-use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
 use Atoa\AtoaPayment\Api\ExpiredWebhookInterface;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
 use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 
 class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
@@ -20,7 +18,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
      * @param ?string $status
      * @param ?string $paidAmount
      * @param ?string $currency
-     * @param StoreDetailsDataInterface $storeDetails
+     * @param ?string $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
      * @param ?string $redirectUrl
@@ -36,7 +34,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         ?string $status,
         ?string $paidAmount,
         ?string $currency,
-        \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
+        ?string $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
         ?string $redirectUrl,
@@ -52,11 +50,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
             'status' => $status,
             'paid_amount' => $paidAmount,
             'currency' => $currency,
-            'store_details' => [
-                'id' => $storeDetails->getId(),
-                'address' => $storeDetails->getAddress(),
-                'location_name' => $storeDetails->getLocationName()
-            ],
+            'store_details' => $storeDetails,
             'order_id' => $orderId,
             'payment_request_id' => $paymentRequestId,
             'redirect_url_params' => $redirectUrlParams,

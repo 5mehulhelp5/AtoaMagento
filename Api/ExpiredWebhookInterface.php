@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Atoa\AtoaPayment\Api;
 
-use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
-
 interface ExpiredWebhookInterface
 {
     /**
@@ -15,7 +13,7 @@ interface ExpiredWebhookInterface
      * @param ?string $status
      * @param ?string $paidAmount
      * @param ?string $currency
-     * @param StoreDetailsDataInterface $storeDetails
+     * @param ?string $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
      * @param ?string $redirectUrl
@@ -30,7 +28,7 @@ interface ExpiredWebhookInterface
         ?string $status,
         ?string $paidAmount,
         ?string $currency,
-        \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
+        ?string $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
         ?string $redirectUrl,
