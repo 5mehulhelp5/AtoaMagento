@@ -61,8 +61,8 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        mixed $redirectUrlParams,
-        ?string $redirectUrl,
+        mixed $redirectUrlParams = null,
+        ?string $redirectUrl = null,
         ?string $signatureHash = null,
         ?string $errorDescription = null,
         ?string $eventType = null

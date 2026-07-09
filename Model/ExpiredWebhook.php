@@ -37,7 +37,7 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         ?string $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $redirectUrl,
+        ?string $redirectUrl = null,
         mixed $redirectUrlParams = null,
         ?string $signatureHash = null,
         ?string $eventType = null
