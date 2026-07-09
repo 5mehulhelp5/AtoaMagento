@@ -103,9 +103,6 @@ class Index implements HttpGetActionInterface, CsrfAwareActionInterface
                 || $params['status'] === Atoa::PAYMENT_STATUS_COMPLETED
             ) {
                 if ($params['status'] === Atoa::PAYMENT_STATUS_COMPLETED) {
-                    $this->checkoutSession->setData('paymentIdempotencyId', $params['paymentIdempotencyId']);
-                    $order = $this->checkoutSession->getLastRealOrder();
-                    $this->checkoutSession->setData('mobilenumber', $order->getBillingAddress()->getTelephone());
                     $this->checkoutSession->setData(
                         'titlePage',
                         'Thank you for your purchase!'
@@ -117,7 +114,6 @@ class Index implements HttpGetActionInterface, CsrfAwareActionInterface
                 }
 
                 if ($params['status'] === Atoa::PAYMENT_STATUS_PENDING) {
-                    $this->checkoutSession->setData('paymentIdempotencyId', false);
                     $this->checkoutSession->setData(
                         'titlePage',
                         'Order Pending'

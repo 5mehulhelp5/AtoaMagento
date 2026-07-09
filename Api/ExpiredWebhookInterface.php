@@ -3,8 +3,6 @@ declare(strict_types=1);
 
 namespace Atoa\AtoaPayment\Api;
 
-use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
-
 interface ExpiredWebhookInterface
 {
     /**
@@ -15,11 +13,12 @@ interface ExpiredWebhookInterface
      * @param ?string $status
      * @param ?string $paidAmount
      * @param ?string $currency
-     * @param StoreDetailsDataInterface $storeDetails
+     * @param ?string $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param mixed $redirectUrlParams
+     * @param ?string $signatureHash
      * @param ?string $eventType
      * @return ExpiredWebhookInterface
      */
@@ -29,11 +28,19 @@ interface ExpiredWebhookInterface
         ?string $status,
         ?string $paidAmount,
         ?string $currency,
-        \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
+        ?string $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $redirectUrl,
+        ?string $redirectUrl = null,
+        mixed $redirectUrlParams = null,
         ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface;
+
+    /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string;
 }

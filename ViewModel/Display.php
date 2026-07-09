@@ -47,18 +47,18 @@ class Display implements ArgumentInterface
     /**
      * Get Banner Content
      *
-     * @return array|string
+     * @return array
      */
-    public function getBannerContent(): array|string
+    public function getBannerContent(): array
     {
         $contentText = $this->configProvider->getConfig(Atoa::BANNER_CONTENT_TEXT);
         if ($contentText) {
             $parts = preg_split('/(\{\{logo\}\})/', $contentText, -1, PREG_SPLIT_DELIM_CAPTURE);
 
-            return array_filter($parts, function ($part) {
+            return array_values(array_filter($parts, function ($part) {
                 return $part !== '';
-            });
+            }));
         }
-        return '';
+        return [];
     }
 }

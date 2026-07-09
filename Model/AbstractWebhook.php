@@ -62,6 +62,11 @@ abstract class AbstractWebhook
     protected HttpRequest $request;
 
     /**
+     * @var ?string
+     */
+    protected ?string $message = null;
+
+    /**
      * Webhook construct.
      *
      * @param ConfigProvider $configProvider
@@ -97,15 +102,40 @@ abstract class AbstractWebhook
     }
 
     /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string
+    {
+        return $this->message;
+    }
+
+    /**
+     * Returns true only if the webhook originated from this Magento plugin.
+     * Compares redirectUrlParams['source'] (case-insensitive) against Atoa::SOURCE.
+     *
+     * @param mixed $redirectUrlParams
+     * @return bool
+     */
+    protected function isMagentoPaymentWebhook(mixed $redirectUrlParams): bool
+    {
+        if (!is_array($redirectUrlParams)) {
+            return false;
+        }
+        return strtolower($redirectUrlParams['source'] ?? '') === Atoa::SOURCE;
+    }
+
+    /**
      * Validate webhook request signature.
      * Tries V2 (X-Atoa-Signature header) first, falls back to V1 (signatureHash param).
      *
-     * @param string $orderId
-     * @param string $paymentRequestId
+     * @param ?string $orderId
+     * @param ?string $paymentRequestId
      * @param ?string $signatureHash
      * @return bool
      */
-    protected function validateRequest(string $orderId, string $paymentRequestId, ?string $signatureHash): bool
+    protected function validateRequest(?string $orderId, ?string $paymentRequestId, ?string $signatureHash): bool
     {
         $signatureHeader = $this->request->getHeader('X-Atoa-Signature');
 
@@ -115,7 +145,7 @@ abstract class AbstractWebhook
         }
 
         $this->logger->info('[VALIDATE_REQUEST] Using V1 signature verification');
-        if (empty($signatureHash)) {
+        if (empty($orderId) || empty($paymentRequestId) || empty($signatureHash)) {
             $this->logger->info('[VALIDATE_REQUEST] No signature found');
             return false;
         }

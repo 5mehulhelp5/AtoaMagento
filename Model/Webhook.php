@@ -7,7 +7,6 @@ use Atoa\AtoaPayment\Api\Data\StatusDetailsDataInterface;
 use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
 use Atoa\AtoaPayment\Api\WebhookInterface;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
-use Magento\Framework\DataObject;
 use Magento\Framework\Exception\AlreadyExistsException;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Sales\Model\Order;
@@ -35,7 +34,7 @@ class Webhook extends AbstractWebhook implements WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param DataObject $redirectUrlParams
+     * @param mixed $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription
@@ -62,8 +61,8 @@ class Webhook extends AbstractWebhook implements WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        \Magento\Framework\DataObject $redirectUrlParams,
-        ?string $redirectUrl,
+        mixed $redirectUrlParams = null,
+        ?string $redirectUrl = null,
         ?string $signatureHash = null,
         ?string $errorDescription = null,
         ?string $eventType = null
@@ -101,10 +100,18 @@ class Webhook extends AbstractWebhook implements WebhookInterface
             'payment_request_id' => $paymentRequestId,
             'signature_hash' => $signatureHash,
             'error_description' => $errorDescription,
-            'redirect_url_params' => $redirectUrlParams->getData(),
+            'redirect_url_params' => $redirectUrlParams,
             'redirect_url' => $redirectUrl
         ]);
         $this->logger->info('[WEBHOOK_PARAMS_END]');
+
+        if (!$this->isMagentoPaymentWebhook($redirectUrlParams)) {
+            $got = is_array($redirectUrlParams) ? (strtolower($redirectUrlParams['source'] ?? '') ?: 'none') : 'none';
+            $this->message = sprintf('Webhook ignored: expected source "%s", received "%s".', Atoa::SOURCE, $got);
+            $this->logger->info('[PROCESS_WEBHOOK_END] ' . $this->message);
+            $this->logger->info('*******************************************************************');
+            return $this;
+        }
 
         if (!$this->validateRequest($orderId, $paymentRequestId, $signatureHash)) {
             $this->logger->info('[PROCESS_WEBHOOK_END]', ['signature hash not match']);
@@ -119,7 +126,8 @@ class Webhook extends AbstractWebhook implements WebhookInterface
             ->setPageSize(1)
             ->getFirstItem();
 
-        if (!$order->getId() || $order->getPayment()->getMethod() !== Atoa::CODE) {
+        $method = $order->getPayment() ? $order->getPayment()->getMethod() : null;
+        if (!$order->getId() || !in_array($method, [Atoa::CODE, Atoa::CODE_CARD], true)) {
             $this->logger->info('[PROCESS_WEBHOOK_END]', ['order not found']);
             $this->logger->info('*******************************************************************');
             return $this;
@@ -174,11 +182,15 @@ class Webhook extends AbstractWebhook implements WebhookInterface
 
         $this->resourceOrder->save($order);
         if ($order->getState() === Order::STATE_CANCELED) {
-            $this->orderSender->send(
-                $order,
-                true,
-                __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
-            );
+            try {
+                $this->orderSender->send(
+                    $order,
+                    true,
+                    __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
+                );
+            } catch (\Exception $e) {
+                $this->logger->info('[PROCESS_WEBHOOK_END] Email send failed: ' . $e->getMessage());
+            }
         }
         $this->logger->info('[PROCESS_WEBHOOK_END]', ['process order successfully']);
         $this->logger->info('*******************************************************************');

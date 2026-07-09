@@ -1,7 +1,7 @@
 <div class="payment-method" data-bind="css: {'_active': (getCode() == isChecked())}">
     <div class="payment-method-title atoa-payment-title field choice">
         <input type="radio"
-               name="atoa"
+               name="payment[method]"
                class="radio"
                data-bind="
                    attr: {'id': getCode()},
@@ -12,17 +12,55 @@
                "
         ></input>
         <label data-bind="attr: {'for': getCode()}" class="atoa-payment-label">
-            <span data-bind="text: getTitle()"></span>
+            <span class="atoa-method-header">
+                <span data-bind="text: getTitle()"></span>
+
+                <!-- Bank logos (atoa) — first 4 inline, rest in hover popup -->
+                <!-- ko if: isBank() -->
+                <span class="bank-support">
+                    <!-- ko foreach: getVisibleBankLogos() -->
+                    <span class="atoa-logo-wrapper">
+                        <img class="atoa-bank-logo"
+                             data-bind="attr: { src: $data.src, alt: $data.alt }" />
+                    </span>
+                    <!-- /ko -->
+                    <!-- ko if: getHiddenBankLogos().length > 0 -->
+                    <span class="atoa-more-wrapper"
+                          tabindex="0"
+                          role="button"
+                          data-bind="css: {'is-open': popupOpen}, click: togglePopup, event: {keydown: onPopupKeydown}">
+                        <span class="atoa-more">
+                            +<!-- ko text: getHiddenBankLogos().length --><!-- /ko -->
+                        </span>
+                        <span class="atoa-hidden-logos">
+                            <!-- ko foreach: getHiddenBankLogos() -->
+                            <span class="atoa-logo-wrapper">
+                                <img class="atoa-bank-logo"
+                                     data-bind="attr: { src: $data.src, alt: $data.alt }" />
+                            </span>
+                            <!-- /ko -->
+                        </span>
+                    </span>
+                    <!-- /ko -->
+                </span>
+                <!-- /ko -->
+
+                <!-- Card logos (atoa_card) -->
+                <!-- ko if: isCard() -->
+                <span class="bank-support">
+                    <!-- ko foreach: getCardLogos() -->
+                    <span class="atoa-card-logo-wrapper">
+                        <img class="atoa-card-logo"
+                             data-bind="attr: { src: $data.src, alt: $data.alt }" />
+                    </span>
+                    <!-- /ko -->
+                </span>
+                <!-- /ko -->
+            </span>
+
             <span data-bind="attr: { class: getStyle() }">
                 <span class="payment-text">
                     <span data-bind="text: getBannerCheckoutText()"></span>
-                    <span class="icon"></span>
-                </span>
-                <span class="bank-support">
-                    <!-- Atoa Bank Logos -->
-                        <img alt="" data-bind="attr: {src: getBankLogosSrc(), alt: getTitle()}" class="payment-banks logo-desktop" />
-                        <img alt="" data-bind="attr: {src: getMobileBankLogosSrc(), alt: getTitle()}" class="payment-banks logo-mobile" />
-                    <!-- Atoa Bank Logos -->
                 </span>
             </span>
         </label>

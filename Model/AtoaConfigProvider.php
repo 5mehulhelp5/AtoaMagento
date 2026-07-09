@@ -26,20 +26,28 @@ class AtoaConfigProvider implements ConfigProviderInterface
     private ConfigProvider $configProvider;
 
     /**
+     * @var InstitutionsService
+     */
+    private InstitutionsService $institutionsService;
+
+    /**
      * Atoa Config Provider construct.
      *
      * @param RequestInterface $request
      * @param Repository $assetRepo
      * @param ConfigProvider $configProvider
+     * @param InstitutionsService $institutionsService
      */
     public function __construct(
         RequestInterface $request,
         Repository $assetRepo,
-        ConfigProvider $configProvider
+        ConfigProvider $configProvider,
+        InstitutionsService $institutionsService
     ) {
-        $this->request = $request;
-        $this->assetRepo = $assetRepo;
-        $this->configProvider = $configProvider;
+        $this->request             = $request;
+        $this->assetRepo           = $assetRepo;
+        $this->configProvider      = $configProvider;
+        $this->institutionsService = $institutionsService;
     }
 
     /**
@@ -50,22 +58,86 @@ class AtoaConfigProvider implements ConfigProviderInterface
         return [
             'payment' => [
                 Atoa::CODE => [
-                    'logoMarkHref' => $this->assetRepo->getUrlWithParams(
-                        'Atoa_AtoaPayment/images/atoa-claret-icon.png',
-                        ['_secure' => $this->request->isSecure()]
+                    'logoMarkHref' => $this->getAssetUrl('Atoa_AtoaPayment/images/atoa-claret-icon.png'),
+                    'bankConfig'   => [
+                        'logos' => $this->configProvider->getConfigForMethod(Atoa::CODE, Atoa::ACTIVE)
+                            ? $this->safeGetBankLogos()
+                            : [],
+                    ],
+                    'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE,
+                        Atoa::BANNER_CHECKOUT_TEXT
                     ),
-                    'bankLogosHref' => $this->assetRepo->getUrlWithParams(
-                        'Atoa_AtoaPayment/images/bank-support.png',
-                        ['_secure' => $this->request->isSecure()]
+                    'style'              => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE,
+                        Atoa::BANNER_CHECKOUT_STYLES
                     ),
-                    'mobileBankLogosHref' => $this->assetRepo->getUrlWithParams(
-                        'Atoa_AtoaPayment/images/bank-support-mobile.png',
-                        ['_secure' => $this->request->isSecure()]
+                ],
+                Atoa::CODE_CARD => [
+                    'cardConfig'         => [
+                        'logos' => $this->getCardLogos(),
+                    ],
+                    'bannerCheckoutText' => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE_CARD,
+                        Atoa::BANNER_CHECKOUT_TEXT
                     ),
-                    'bannerCheckoutText' => $this->configProvider->getConfig(Atoa::BANNER_CHECKOUT_TEXT),
-                    'style' => $this->configProvider->getConfig(Atoa::BANNER_CHECKOUT_STYLES)
-                ]
+                    'style'              => $this->configProvider->getConfigForMethod(
+                        Atoa::CODE_CARD,
+                        Atoa::BANNER_CHECKOUT_STYLES
+                    ),
+                ],
             ]
         ];
+    }
+
+    /**
+     * Safely fetch bank logos, returning an empty array on any failure.
+     * Prevents a corrupted cache entry or API error from breaking window.checkoutConfig.
+     *
+     * @return array<int, array{src: string, alt: string}>
+     */
+    private function safeGetBankLogos(): array
+    {
+        try {
+            return $this->institutionsService->getBankLogos();
+        } catch (\Exception $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Return card logo configs for the checkout UI.
+     *
+     * @return array<int, array{src: string, alt: string}>
+     */
+    private function getCardLogos(): array
+    {
+        $cards = [
+            ['file' => 'visa.svg',      'alt' => 'Visa'],
+            ['file' => 'master.svg',    'alt' => 'Mastercard'],
+            ['file' => 'g_pay.svg',     'alt' => 'Google Pay'],
+            ['file' => 'apple_pay.svg', 'alt' => 'Apple Pay'],
+        ];
+
+        return array_map(function (array $card): array {
+            return [
+                'src' => $this->getAssetUrl('Atoa_AtoaPayment/images/cards/' . $card['file']),
+                'alt' => $card['alt'],
+            ];
+        }, $cards);
+    }
+
+    /**
+     * Build a secure-aware URL for a module asset.
+     *
+     * @param string $fileId
+     * @return string
+     */
+    private function getAssetUrl(string $fileId): string
+    {
+        return $this->assetRepo->getUrlWithParams(
+            $fileId,
+            ['_secure' => $this->request->isSecure()]
+        );
     }
 }

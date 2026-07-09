@@ -9,7 +9,8 @@ use Magento\Store\Model\ScopeInterface;
 
 class ConfigProvider
 {
-    public const MODULE_CONFIG_PREFIX = 'payment/atoa/';
+    public const PAYMENT_CONFIG_BASE  = 'payment/';
+    public const MODULE_CONFIG_PREFIX = self::PAYMENT_CONFIG_BASE . 'atoa/';
 
     /**
      * @var ScopeConfigInterface
@@ -40,29 +41,21 @@ class ConfigProvider
     }
 
     /**
-     * Ts Enable Banner Checkout
+     * Read a config field for any payment method code.
+     * Used to read card-specific settings (payment/atoa_card/...) which have a
+     * different prefix than the shared bank config (payment/atoa/).
      *
-     * @return bool
+     * @param string $methodCode
+     * @param string $field
+     * @param ?string $scope
+     * @return mixed
      */
-    public function isEnableBannerCheckout(): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            self::MODULE_CONFIG_PREFIX . Atoa::ENABLE_BANNER_CHECKOUT,
-            ScopeInterface::SCOPE_STORE
-        );
-    }
-
-    /**
-     * Ts Enable Claim Reward
-     *
-     * @return bool
-     */
-    public function isEnableClaimReward(): bool
-    {
-        return $this->scopeConfig->isSetFlag(
-            self::MODULE_CONFIG_PREFIX . Atoa::ENABLE_CLAIM_REWARD,
-            ScopeInterface::SCOPE_STORE
-        );
+    public function getConfigForMethod(
+        string $methodCode,
+        string $field,
+        ?string $scope = ScopeInterface::SCOPE_STORE
+    ): mixed {
+        return $this->scopeConfig->getValue(self::PAYMENT_CONFIG_BASE . $methodCode . '/' . $field, $scope);
     }
 
     /**

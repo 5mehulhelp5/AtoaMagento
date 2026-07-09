@@ -3,11 +3,9 @@ declare(strict_types=1);
 
 namespace Atoa\AtoaPayment\Model;
 
-use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
 use Atoa\AtoaPayment\Api\ExpiredWebhookInterface;
 use Atoa\AtoaPayment\Model\Payment\Atoa;
 use Magento\Framework\Exception\AlreadyExistsException;
-use Magento\Quote\Model\Quote;
 use Magento\Sales\Model\Order;
 
 class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
@@ -20,11 +18,12 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
      * @param ?string $status
      * @param ?string $paidAmount
      * @param ?string $currency
-     * @param StoreDetailsDataInterface $storeDetails
+     * @param ?string $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param ?string $signatureHash
      * @param ?string $redirectUrl
+     * @param mixed $redirectUrlParams
+     * @param ?string $signatureHash
      * @param ?string $eventType
      * @return ExpiredWebhookInterface
      * @throws AlreadyExistsException
@@ -35,10 +34,11 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
         ?string $status,
         ?string $paidAmount,
         ?string $currency,
-        \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
+        ?string $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        ?string $redirectUrl,
+        ?string $redirectUrl = null,
+        mixed $redirectUrlParams = null,
         ?string $signatureHash = null,
         ?string $eventType = null
     ): ExpiredWebhookInterface {
@@ -50,17 +50,22 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
             'status' => $status,
             'paid_amount' => $paidAmount,
             'currency' => $currency,
-            'store_details' => [
-                'id' => $storeDetails->getId(),
-                'address' => $storeDetails->getAddress(),
-                'location_name' => $storeDetails->getLocationName()
-            ],
+            'store_details' => $storeDetails,
             'order_id' => $orderId,
             'payment_request_id' => $paymentRequestId,
+            'redirect_url_params' => $redirectUrlParams,
             'signature_hash' => $signatureHash,
             'redirect_url' => $redirectUrl
         ]);
         $this->logger->info('[EXPIRED_WEBHOOK_PARAMS_END]');
+
+        if (!$this->isMagentoPaymentWebhook($redirectUrlParams)) {
+            $got = is_array($redirectUrlParams) ? (strtolower($redirectUrlParams['source'] ?? '') ?: 'none') : 'none';
+            $this->message = sprintf('Webhook ignored: expected source "%s", received "%s".', Atoa::SOURCE, $got);
+            $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END] ' . $this->message);
+            $this->logger->info('*******************************************************************');
+            return $this;
+        }
 
         if (!$this->validateRequest($orderId, $paymentRequestId, $signatureHash)) {
             $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['signature hash not match']);
@@ -75,7 +80,8 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
             ->setPageSize(1)
             ->getFirstItem();
 
-        if (!$order->getId() || $order->getPayment()->getMethod() !== Atoa::CODE) {
+        $method = $order->getPayment() ? $order->getPayment()->getMethod() : null;
+        if (!$order->getId() || !in_array($method, [Atoa::CODE, Atoa::CODE_CARD], true)) {
             $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['order not found']);
             $this->logger->info('*******************************************************************');
             return $this;
@@ -90,11 +96,15 @@ class ExpiredWebhook extends AbstractWebhook implements ExpiredWebhookInterface
 
             $this->resourceOrder->save($order);
             if ($order->getState() === Order::STATE_CANCELED) {
-                $this->orderSender->send(
-                    $order,
-                    true,
-                    __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
-                );
+                try {
+                    $this->orderSender->send(
+                        $order,
+                        true,
+                        __('Canceled order. Pay request ID: %1 ', $paymentRequestId)->__toString()
+                    );
+                } catch (\Exception $e) {
+                    $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END] Email send failed: ' . $e->getMessage());
+                }
             }
 
             $this->logger->info('[PROCESS_EXPIRED_WEBHOOK_END]', ['revert quote successfully']);

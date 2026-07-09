@@ -5,8 +5,6 @@ namespace Atoa\AtoaPayment\Api;
 
 use Atoa\AtoaPayment\Api\Data\StatusDetailsDataInterface;
 use Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface;
-use Magento\Framework\DataObject;
-
 interface WebhookInterface
 {
     /**
@@ -29,7 +27,7 @@ interface WebhookInterface
      * @param StoreDetailsDataInterface $storeDetails
      * @param ?string $orderId
      * @param ?string $paymentRequestId
-     * @param DataObject $redirectUrlParams
+     * @param mixed $redirectUrlParams
      * @param ?string $redirectUrl
      * @param ?string $signatureHash
      * @param ?string $errorDescription
@@ -54,10 +52,17 @@ interface WebhookInterface
         \Atoa\AtoaPayment\Api\Data\StoreDetailsDataInterface $storeDetails,
         ?string $orderId,
         ?string $paymentRequestId,
-        \Magento\Framework\DataObject $redirectUrlParams,
-        ?string $redirectUrl,
+        mixed $redirectUrlParams = null,
+        ?string $redirectUrl = null,
         ?string $signatureHash = null,
         ?string $errorDescription = null,
-        ?string $eventType = null,
+        ?string $eventType = null
     ): WebhookInterface;
+
+    /**
+     * Get response message.
+     *
+     * @return ?string
+     */
+    public function getMessage(): ?string;
 }

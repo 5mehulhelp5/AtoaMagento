@@ -24,19 +24,36 @@
                     <enable_store_view_banner>1</enable_store_view_banner>
                     <enable_banner_product_listing>1</enable_banner_product_listing>
                     <enable_banner_product_detail>1</enable_banner_product_detail>
-                    <enable_banner_checkout>1</enable_banner_checkout>
                     <enable_information_popup>1</enable_information_popup>
-                    <banner_content_text>{{logo}}Pay using &amp; win cashback</banner_content_text>
+                    <banner_content_text>{{logo}}Pay with Atoa</banner_content_text>
                     <banner_styles>1</banner_styles>
                 </atoa_display_settings>
                 <atoa_checkout_setting>
-                    <show_atoa_cashback>0</show_atoa_cashback>
-                    <enable_claim_reward>0</enable_claim_reward>
-                    <enable_banner_checkout>0</enable_banner_checkout>
                     <banner_styles>1</banner_styles>
-                    <banner_checkout_text>Pay securely via your Bank app</banner_checkout_text>
+                    <banner_checkout_text>Pay instantly from your bank app. Safe and simple.</banner_checkout_text>
                 </atoa_checkout_setting>
             </atoa>
+            <atoa_card>
+                <active>0</active>
+                <model>AtoaCardAdapter</model>
+                <order_status_paid>processing</order_status_paid>
+                <order_status_cancel>canceled</order_status_cancel>
+                <is_gateway>1</is_gateway>
+                <can_initialize>1</can_initialize>
+                <can_use_checkout>1</can_use_checkout>
+                <can_authorize>1</can_authorize>
+                <can_capture>0</can_capture>
+                <can_review_payment>1</can_review_payment>
+                <payment_action>authorize</payment_action>
+                <order_status>pending</order_status>
+                <title>Atoa Card Payment</title>
+                <allowspecific>0</allowspecific>
+                <sort_order>2</sort_order>
+                <atoa_checkout_setting>
+                    <banner_checkout_text>Pay securely with your card, Apple Pay or Google Pay.</banner_checkout_text>
+                    <banner_styles>1</banner_styles>
+                </atoa_checkout_setting>
+            </atoa_card>
         </payment>
     </default>
 </config>
